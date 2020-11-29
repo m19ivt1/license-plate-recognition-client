@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">License Plate Recognition</string>
+    <string name="camera_image_view_description">Captured image view</string>
+    <string name="start_camera_button_label">Open camera</string>
+</resources>
