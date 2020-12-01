@@ -2,4 +2,7 @@
     <string name="app_name">License Plate Recognition</string>
     <string name="camera_image_view_description">Captured image view</string>
     <string name="start_camera_button_label">Open camera</string>
+    <string name="could_not_recognize_toast_message">Could not recognize license plate</string>
+    <string name="api_communication_error_toast_message">Server communication failed</string>
+    <string name="result_confidence_text">confidence</string>
 </resources>

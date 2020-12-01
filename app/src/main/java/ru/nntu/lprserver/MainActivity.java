@@ -38,6 +38,14 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String MULTIPART_LICENSE_PLATE_IMAGE_ID = "license_plate_image";
+
+    private static final String MULTIPART_LICENSE_PLATE_IMAGE_FILENAME = "license_plate_image.jpg";
+
+    private static final String MULTIPART_LICENSE_PLATE_IMAGE_MEDIA_TYPE = "image/*jpg";
+
+    private static final String MULTIPART_COUNTRY_CODE_ID = "country_code";
+
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private ProgressBar progressBar;
@@ -78,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             startActivityForResult(takePhotoIntent, REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
-            // handle it
+            e.printStackTrace();
         }
     }
 
@@ -87,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             try {
-                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
+                        imageUri);
                 cameraImageView.setImageBitmap(imageBitmap);
                 progressBar.setVisibility(View.VISIBLE);
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -105,13 +114,24 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                // TODO: extract to constants
-                .addFormDataPart("license_plate_image", "license_plate_image.jpg",
-                        RequestBody.create(MediaType.parse("image/*jpg"), imageData))
-                .addFormDataPart("country_code", "us")
+                .addFormDataPart(MULTIPART_LICENSE_PLATE_IMAGE_ID,
+                        MULTIPART_LICENSE_PLATE_IMAGE_FILENAME,
+                        RequestBody.create(
+                                MediaType.parse(MULTIPART_LICENSE_PLATE_IMAGE_MEDIA_TYPE),
+                                imageData))
+                .addFormDataPart(MULTIPART_COUNTRY_CODE_ID, "us")
                 .build();
-        // TODO: make url configurable
-        HttpUrl localUrl = HttpUrl.parse("http://192.168.0.248:8090/lpr/recognize");
+        HttpUrl localUrl = HttpUrl.parse(
+                BuildConfig.API_HOST_URL + ":"
+                        + BuildConfig.API_HOST_PORT
+                        + BuildConfig.API_RECOGNIZE_PATH
+        );
+
+        if (localUrl == null) {
+            showToast(R.string.api_communication_error_toast_message);
+            return;
+        }
+
         Request request = new Request.Builder()
                 .url(localUrl)
                 .post(requestBody)
@@ -119,7 +139,8 @@ public class MainActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                licensePlateTextView.setText(call.toString());
+                showToast(R.string.api_communication_error_toast_message);
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -139,19 +160,26 @@ public class MainActivity extends AppCompatActivity {
                     String number = responseObject.getString("number");
                     double confidence = responseObject.getDouble("confidence");
                     licensePlateTextView.setText(
-                            String.format("%s (confidence: %s)", number, confidence));
+                            String.format("%s (" + getResources()
+                                            .getString(R.string.result_confidence_text) + ": %s)",
+                                    number, confidence));
                 } catch (IOException | JSONException e) {
+                    showToast(R.string.api_communication_error_toast_message);
                     e.printStackTrace();
                 }
             }
         } else if (response.code() == HttpURLConnection.HTTP_NOT_FOUND) {
-            // TODO: use text values from strings.xml
-            Toast.makeText(getApplicationContext(), "Could not recognize license plate",
-                    Toast.LENGTH_LONG).show();
+            showToast(R.string.could_not_recognize_toast_message);
         } else if (response.code() == HttpURLConnection.HTTP_BAD_REQUEST ||
                 response.code() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
-            Toast.makeText(getApplicationContext(), "Internal error happened",
-                    Toast.LENGTH_LONG).show();
+            showToast(R.string.api_communication_error_toast_message);
         }
+    }
+
+    private void showToast(int stringId) {
+        Toast.makeText(getApplicationContext(),
+                getResources().getString(stringId),
+                Toast.LENGTH_LONG)
+                .show();
     }
 }
