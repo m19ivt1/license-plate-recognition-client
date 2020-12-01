@@ -3,6 +3,9 @@ package ru.nntu.lprserver;
 import android.app.Application;
 import android.content.Context;
 
+/**
+ * Application class with {@link Context} getter.
+ */
 public class LprApplication extends Application {
 
     private static Context context;
@@ -13,6 +16,11 @@ public class LprApplication extends Application {
         LprApplication.context = getApplicationContext();
     }
 
+    /**
+     * Returns application context.
+     *
+     * @return current {@link Context} object
+     */
     public static Context getAppContext() {
         return LprApplication.context;
     }

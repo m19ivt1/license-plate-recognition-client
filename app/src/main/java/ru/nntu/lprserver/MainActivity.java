@@ -38,6 +38,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Main activity.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String MULTIPART_LICENSE_PLATE_IMAGE_ID = "license_plate_image";
@@ -47,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String MULTIPART_LICENSE_PLATE_IMAGE_MEDIA_TYPE = "image/*jpg";
 
     private static final String MULTIPART_COUNTRY_CODE_ID = "country_code";
+
+    private static final String API_RESPONSE_NUMBER_ATTRIBUTE = "number";
+
+    private static final String API_RESPONSE_CONFIDENCE_ATTRIBUTE = "confidence";
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -176,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject responseObject = null;
                 try {
                     responseObject = new JSONObject(response.body().string());
-                    String number = responseObject.getString("number");
-                    double confidence = responseObject.getDouble("confidence");
+                    String number = responseObject.getString(API_RESPONSE_NUMBER_ATTRIBUTE);
+                    double confidence = responseObject.getDouble(API_RESPONSE_CONFIDENCE_ATTRIBUTE);
                     licensePlateTextView.setText(
                             String.format("%s (" + getResources()
                                             .getString(R.string.result_confidence_text) + ": %s)",
