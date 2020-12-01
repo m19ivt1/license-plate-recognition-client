@@ -5,4 +5,6 @@
     <string name="could_not_recognize_toast_message">Could not recognize license plate</string>
     <string name="api_communication_error_toast_message">Server communication failed</string>
     <string name="result_confidence_text">confidence</string>
+    <string name="country_code_usa">USA</string>
+    <string name="country_code_eu">Europe</string>
 </resources>

@@ -9,9 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageView cameraImageView;
 
+    private Spinner countryCodesSpinner;
+
     private TextView licensePlateTextView;
 
     private Button startCameraButton;
@@ -64,8 +68,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         progressBar = findViewById(R.id.progress_bar);
+
         cameraImageView = findViewById(R.id.camera_image_view);
+
         licensePlateTextView = findViewById(R.id.license_plate_text_view);
+
         startCameraButton = findViewById(R.id.start_camera_btn);
         startCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
                 startCamera();
             }
         });
+
+        countryCodesSpinner = (Spinner) findViewById(R.id.country_codes_spinner);
+
+        // create adapter
+        ArrayAdapter<CountryCodeEnum> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, CountryCodeEnum.values());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        countryCodesSpinner.setAdapter(adapter);
     }
 
     private void startCamera() {
@@ -95,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             try {
+                // clean previous result, if exists
+                licensePlateTextView.setText("");
+
                 Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
                         imageUri);
                 cameraImageView.setImageBitmap(imageBitmap);
@@ -112,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(300, TimeUnit.SECONDS)
                 .build();
+        String countryCode = ((CountryCodeEnum) countryCodesSpinner.getSelectedItem()).getApiCode();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart(MULTIPART_LICENSE_PLATE_IMAGE_ID,
@@ -119,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         RequestBody.create(
                                 MediaType.parse(MULTIPART_LICENSE_PLATE_IMAGE_MEDIA_TYPE),
                                 imageData))
-                .addFormDataPart(MULTIPART_COUNTRY_CODE_ID, "us")
+                .addFormDataPart(MULTIPART_COUNTRY_CODE_ID, countryCode)
                 .build();
         HttpUrl localUrl = HttpUrl.parse(
                 BuildConfig.API_HOST_URL + ":"

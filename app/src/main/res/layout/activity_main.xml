@@ -9,14 +9,21 @@
         android:id="@+id/camera_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/license_plate_text_view"
+        android:layout_above="@id/country_codes_spinner"
         android:contentDescription="@string/camera_image_view_description" />
+
+    <Spinner
+        android:id="@+id/country_codes_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/license_plate_text_view"/>
 
     <TextView
         android:id="@+id/license_plate_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:textSize="16sp"
         android:layout_above="@id/start_camera_btn" />
 
     <Button
