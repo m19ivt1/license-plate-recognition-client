@@ -203,9 +203,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showToast(int stringId) {
-        Toast.makeText(getApplicationContext(),
-                getResources().getString(stringId),
-                Toast.LENGTH_LONG)
-                .show();
+        // must be called from UI thread
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(),
+                        getResources().getString(stringId),
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 }
