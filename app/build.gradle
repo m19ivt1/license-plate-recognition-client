@@ -18,13 +18,14 @@ android {
     buildTypes {
         debug {
             // change to your dev environment values
-            buildConfigField 'String', 'API_HOST_URL', '"http://192.168.0.248"'
+            buildConfigField 'String', 'API_HOST_URL', '"http://192.168.0.1"'
             buildConfigField 'String', 'API_HOST_PORT', '"8090"'
             buildConfigField 'String', 'API_RECOGNIZE_PATH', '"/lpr/recognize"'
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
 
             // must be changed to real production server host url value
             buildConfigField 'String', 'API_HOST_URL', '"http://192.168.0.248"'
