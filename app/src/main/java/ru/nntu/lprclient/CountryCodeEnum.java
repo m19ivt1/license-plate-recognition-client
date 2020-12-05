@@ -1,4 +1,4 @@
-package ru.nntu.lprserver;
+package ru.nntu.lprclient;
 
 import androidx.annotation.NonNull;
 

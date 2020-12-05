@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "ru.nntu.lprserver"
+        applicationId "ru.nntu.lprclient"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1

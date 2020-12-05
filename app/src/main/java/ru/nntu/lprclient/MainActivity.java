@@ -1,4 +1,4 @@
-package ru.nntu.lprserver;
+package ru.nntu.lprclient;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
